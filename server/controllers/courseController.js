@@ -257,10 +257,14 @@ const markLessonComplete = async (req, res) => {
       course.completedLessons = [];
     }
     
-    if (!course.completedLessons.includes(lessonKey)) {
+    // Toggle: if already completed, remove it; otherwise add it
+    const idx = course.completedLessons.indexOf(lessonKey);
+    if (idx !== -1) {
+      course.completedLessons.splice(idx, 1);
+    } else {
       course.completedLessons.push(lessonKey);
-      await course.save();
     }
+    await course.save();
 
     return res.json({ success: true, completedLessons: course.completedLessons });
   } catch (err) {

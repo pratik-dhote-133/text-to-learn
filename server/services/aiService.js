@@ -105,7 +105,12 @@ CRITICAL INSTRUCTIONS:
 2. NEVER generate generic placeholder names like "Module 1", "Introduction to X", "Basics of X", "Advanced Concepts", "Intermediate Mechanics", "Core Principles", "Working with Data", "Foundations", "Mastery", "Real-world Application", "Key Concepts".
 3. Each module MUST have a descriptive, educational title (e.g. "Arrays, Linked Lists, and Stacks in Java").
 4. Each lesson MUST have a specific, actionable title (e.g. "Time Complexity and Big-O Notation").
-5. The description MUST explain the outcomes and target audience concisely. MAXIMUM 3-5 LINES.
+5. DESCRIPTION RULES (STRICT):
+   - MAXIMUM 2 lines / 35-45 words
+   - Professional concise tone
+   - Quick overview of what the course covers and who it's for
+   - NO paragraphs. NO lengthy introductions.
+   - Example: "Master modern JavaScript from fundamentals to advanced async patterns, DOM manipulation, APIs, and backend integration through structured hands-on lessons."
 6. Generate EXACTLY 4 modules, each with EXACTLY 4 lessons.
 
 BASELINE ROADMAP TO ADAPT (DO NOT copy verbatim, customize deeply for "${topic}"):
@@ -190,11 +195,12 @@ Domain: ${domainInfo.primary}
 CRITICAL TEACHING PSYCHOLOGY (SIMPLIFIED & BEGINNER FRIENDLY):
 1. Use SIMPLE, EASY English. No academic jargon. No huge documentation-like text walls.
 2. Teach concept-by-concept using short, bite-sized chunks.
-3. Every paragraph MUST be 1-2 sentences maximum.
+3. Every paragraph MUST be 2-3 sentences maximum. NEVER write long paragraphs.
 4. MUST include highlight blocks using the "callout" type.
+5. Start with a TINY intro (1-2 sentences MAX), then immediately go into structured content.
 
 MANDATORY EDUCATIONAL FLOW:
-1. Tiny Intro (1-2 lines explaining exactly what this is)
+1. Tiny Intro (1-2 sentences ONLY explaining what this lesson covers)
 2. Core Concept Definition (Tiny definition, simple explanation)
 3. Real Example (Relatable, real-world scenario)
 4. Code Example (Simple code demonstrating the concept)

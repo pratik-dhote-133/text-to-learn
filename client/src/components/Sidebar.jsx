@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { API_BASE_URL } from '../utils/api';
 
 const Sidebar = () => {
   const [courses, setCourses] = useState([]);
@@ -10,8 +11,9 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
+      if (!user?.token) return;
       try {
-        const res = await fetch('http://localhost:3000/api/courses', {
+        const res = await fetch(`${API_BASE_URL}/api/courses`, {
           headers: {
             'Authorization': `Bearer ${user.token}`
           }
@@ -19,16 +21,19 @@ const Sidebar = () => {
         if (res.ok) {
           const data = await res.json();
           setCourses(data);
+        } else if (res.status === 401) {
+          logout();
+          navigate('/login');
         }
       } catch (err) {
         console.error("Failed to fetch recent courses", err);
       }
     };
     
-    if (user) {
+    if (user?.token) {
       fetchCourses();
     }
-  }, [user]);
+  }, [user, logout, navigate]);
 
   const filteredCourses = courses
     .filter(course => 

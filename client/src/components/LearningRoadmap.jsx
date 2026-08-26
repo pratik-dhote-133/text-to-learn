@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toPng } from 'html-to-image';
 import './LearningRoadmap.css';
 
@@ -24,16 +25,18 @@ const ChevronRight = () => (
 const MapIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
 );
+const ArrowRightIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+);
 
 /* ─── Main Component ─── */
-const LearningRoadmap = ({ course, completedLessons = [] }) => {
+const LearningRoadmap = ({ course, completedLessons = [], courseId, onToggleLesson }) => {
+  const navigate = useNavigate();
   const roadmapRef = useRef(null);
-  const [expandedModules, setExpandedModules] = useState(() => {
-    // Start with first module expanded
-    return { 0: true };
-  });
+  const [expandedModules, setExpandedModules] = useState({});
   const [downloading, setDownloading] = useState(false);
   const [tooltip, setTooltip] = useState(null);
+  const [animatingLessons, setAnimatingLessons] = useState({});
 
   /* ─── Progress calculations (memoized) ─── */
   const progressData = useMemo(() => {
@@ -70,9 +73,27 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
     ? 0
     : Math.round((progressData.totalCompleted / progressData.totalLessons) * 100);
 
-  /* ─── Toggle expand/collapse ─── */
+  /* ─── Find next incomplete lesson for active highlight ─── */
+  const nextLesson = useMemo(() => {
+    for (let mIdx = 0; mIdx < progressData.modules.length; mIdx++) {
+      const mod = progressData.modules[mIdx];
+      for (let lIdx = 0; lIdx < mod.lessons.length; lIdx++) {
+        if (!mod.lessons[lIdx].completed) {
+          return `${mIdx}_${lIdx}`;
+        }
+      }
+    }
+    return null;
+  }, [progressData]);
+
+  /* ─── Toggle expand/collapse (accordion — only one at a time) ─── */
   const toggleModule = useCallback((idx) => {
-    setExpandedModules(prev => ({ ...prev, [idx]: !prev[idx] }));
+    setExpandedModules(prev => {
+      // If clicking the already-expanded module, collapse it
+      if (prev[idx]) return {};
+      // Otherwise expand only this one
+      return { [idx]: true };
+    });
   }, []);
 
   const expandAll = useCallback(() => {
@@ -84,6 +105,33 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
   const collapseAll = useCallback(() => {
     setExpandedModules({});
   }, []);
+
+  /* ─── Navigation handlers ─── */
+  const navigateToModule = useCallback((mIdx) => {
+    if (courseId) navigate(`/module/${courseId}/${mIdx}`);
+  }, [courseId, navigate]);
+
+  const navigateToLesson = useCallback((mIdx, lIdx) => {
+    if (courseId) navigate(`/lesson/${courseId}/${mIdx}/${lIdx}`);
+  }, [courseId, navigate]);
+
+  /* ─── Toggle lesson completion ─── */
+  const handleToggleLesson = useCallback((e, mIdx, lIdx) => {
+    e.stopPropagation();
+    if (onToggleLesson) {
+      // Animate the checkbox
+      const key = `${mIdx}_${lIdx}`;
+      setAnimatingLessons(prev => ({ ...prev, [key]: true }));
+      setTimeout(() => {
+        setAnimatingLessons(prev => {
+          const next = { ...prev };
+          delete next[key];
+          return next;
+        });
+      }, 400);
+      onToggleLesson(mIdx, lIdx);
+    }
+  }, [onToggleLesson]);
 
   /* ─── Download as PNG ─── */
   const handleDownload = useCallback(async () => {
@@ -103,7 +151,7 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
       const dataUrl = await toPng(roadmapRef.current, {
         quality: 1,
         pixelRatio: 2,
-        backgroundColor: '#1a1a2e',
+        backgroundColor: '#0b1020',
         style: {
           padding: '32px',
         },
@@ -146,7 +194,7 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
           <div>
             <h3 className="roadmap-title">Learning Roadmap</h3>
             <p className="roadmap-subtitle">
-              {progressData.modules.length} Modules · {progressData.totalLessons} Lessons
+              {progressData.modules.length} Modules · {progressData.totalLessons} Lessons · {overallProgress}% Complete
             </p>
           </div>
         </div>
@@ -213,8 +261,8 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
                     '--module-soft': color.soft,
                     '--module-glow': color.glow,
                   }}
-                  onClick={() => toggleModule(mIdx)}
-                  onMouseEnter={() => setTooltip({ id: `mod-${mIdx}`, text: `${mod.completedCount}/${mod.totalCount} lessons completed` })}
+                  onClick={() => navigateToModule(mIdx)}
+                  onMouseEnter={() => setTooltip({ id: `mod-${mIdx}`, text: `${mod.completedCount}/${mod.totalCount} lessons · Click to open module` })}
                   onMouseLeave={() => setTooltip(null)}
                 >
                   <div className="roadmap-module-indicator">
@@ -228,8 +276,23 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
                       {mod.progress > 0 && <span className="roadmap-module-progress-badge">{mod.progress}%</span>}
                     </div>
                   </div>
-                  <div className="roadmap-module-chevron">
-                    {isExpanded ? <ChevronDown /> : <ChevronRight />}
+
+                  {/* Navigate arrow + Chevron toggle */}
+                  <div className="roadmap-module-actions">
+                    <button
+                      className="roadmap-chevron-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleModule(mIdx);
+                      }}
+                      title={isExpanded ? 'Collapse' : 'Expand'}
+                      aria-label={isExpanded ? 'Collapse module' : 'Expand module'}
+                    >
+                      {isExpanded ? <ChevronDown /> : <ChevronRight />}
+                    </button>
+                    <div className="roadmap-navigate-arrow">
+                      <ArrowRightIcon />
+                    </div>
                   </div>
 
                   {/* Mini progress bar on module */}
@@ -246,25 +309,40 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
                 {/* Lessons (expandable) */}
                 <div className={`roadmap-lessons-container ${isExpanded ? 'expanded' : ''}`}>
                   <div className="roadmap-lessons-inner">
-                    {mod.lessons.map((lesson, lIdx) => (
-                      <div
-                        className={`roadmap-lesson-node ${lesson.completed ? 'completed' : ''}`}
-                        key={lIdx}
-                        style={{ '--module-color': color.main, '--module-soft': color.soft, animationDelay: `${lIdx * 0.05}s` }}
-                        onMouseEnter={() => setTooltip({ id: `les-${mIdx}-${lIdx}`, text: lesson.completed ? '✓ Completed' : 'Not started' })}
-                        onMouseLeave={() => setTooltip(null)}
-                      >
-                        <div className="roadmap-lesson-connector" />
-                        <div className="roadmap-lesson-dot">
-                          {lesson.completed && <CheckIcon />}
-                        </div>
-                        <span className="roadmap-lesson-title">{lesson.title}</span>
+                    {mod.lessons.map((lesson, lIdx) => {
+                      const isNext = nextLesson === `${mIdx}_${lIdx}`;
+                      const isAnimating = !!animatingLessons[`${mIdx}_${lIdx}`];
 
-                        {tooltip?.id === `les-${mIdx}-${lIdx}` && (
-                          <div className="roadmap-tooltip roadmap-tooltip-sm">{tooltip.text}</div>
-                        )}
-                      </div>
-                    ))}
+                      return (
+                        <div
+                          className={`roadmap-lesson-node ${lesson.completed ? 'completed' : ''} ${isNext ? 'next-lesson' : ''}`}
+                          key={lIdx}
+                          style={{ '--module-color': color.main, '--module-soft': color.soft, animationDelay: `${lIdx * 0.05}s` }}
+                          onClick={() => navigateToLesson(mIdx, lIdx)}
+                          onMouseEnter={() => setTooltip({ id: `les-${mIdx}-${lIdx}`, text: lesson.completed ? '✓ Completed · Click to open' : isNext ? '→ Up next · Click to start' : 'Click to open lesson' })}
+                          onMouseLeave={() => setTooltip(null)}
+                        >
+                          <div className="roadmap-lesson-connector" />
+                          <div
+                            className={`roadmap-lesson-dot ${isAnimating ? 'animating' : ''}`}
+                            onClick={(e) => handleToggleLesson(e, mIdx, lIdx)}
+                            title={lesson.completed ? 'Mark as incomplete' : 'Mark as complete'}
+                            role="checkbox"
+                            aria-checked={lesson.completed}
+                          >
+                            {lesson.completed && <CheckIcon />}
+                          </div>
+                          <span className="roadmap-lesson-title">{lesson.title}</span>
+                          <div className="roadmap-lesson-arrow">
+                            <ArrowRightIcon />
+                          </div>
+
+                          {tooltip?.id === `les-${mIdx}-${lIdx}` && (
+                            <div className="roadmap-tooltip roadmap-tooltip-sm">{tooltip.text}</div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -277,9 +355,9 @@ const LearningRoadmap = ({ course, completedLessons = [] }) => {
 
         {/* Finish node */}
         <div className="roadmap-connector-vertical" />
-        <div className="roadmap-finish-node">
+        <div className={`roadmap-finish-node ${overallProgress === 100 ? 'completed' : ''}`}>
           <span className="roadmap-finish-icon">🏆</span>
-          <span>Course Complete</span>
+          <span>{overallProgress === 100 ? 'Course Complete!' : 'Course Complete'}</span>
         </div>
       </div>
     </div>

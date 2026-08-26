@@ -1,31 +1,35 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { API_BASE_URL } from '../utils/api';
 
 const ModulePage = () => {
   const { courseId, moduleIndex } = useParams();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   
   const inFlightRef = useRef(false);
 
   const initLoad = async () => {
-    if (inFlightRef.current) return;
+    if (inFlightRef.current || !user?.token) return;
     inFlightRef.current = true;
     setError(null);
 
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:3000/api/courses/${courseId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/courses/${courseId}`, {
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
       const data = await res.json();
       
       if (res.ok) {
         setCourse(data);
+      } else if (res.status === 401) {
+        logout();
+        navigate('/login');
       } else {
         setError(data.error || data.message || "Something went wrong. Please try again.");
       }

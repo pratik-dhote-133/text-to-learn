@@ -1,10 +1,12 @@
 /* ═══════════════════════════════════════════════════
-   LEARNING ROADMAP — Premium Visual Flow Diagram
+   LEARNING ROADMAP — Premium Interactive Flow Diagram
    ═══════════════════════════════════════════════════ */
 
 /* ─── Wrapper ─── */
 .roadmap-wrapper {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  background: linear-gradient(135deg, rgba(11, 16, 32, 0.9) 0%, rgba(15, 23, 42, 0.85) 50%, rgba(11, 16, 32, 0.9) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(99, 102, 241, 0.15);
   border-radius: 16px;
   overflow: hidden;
@@ -176,7 +178,7 @@
   stroke: #6366f1;
   stroke-width: 3;
   stroke-linecap: round;
-  transition: stroke-dasharray 0.6s ease;
+  transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .roadmap-progress-text {
@@ -253,7 +255,7 @@
   border-color: var(--module-color, #6366f1);
   background: var(--module-soft, rgba(99, 102, 241, 0.12));
   box-shadow: 0 0 24px var(--module-glow, rgba(99, 102, 241, 0.15));
-  transform: translateX(4px);
+  transform: translateY(-2px) scale(1.01);
 }
 
 .roadmap-module-node.expanded {
@@ -325,14 +327,57 @@
   font-size: 0.65rem;
 }
 
-.roadmap-module-chevron {
-  color: #64748b;
+/* ─── Module actions (chevron + arrow) ─── */
+.roadmap-module-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
 }
 
-.roadmap-module-node.expanded .roadmap-module-chevron {
+.roadmap-chevron-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.roadmap-chevron-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
   color: var(--module-color, #6366f1);
+  border-color: var(--module-color, #6366f1);
+}
+
+.roadmap-module-node.expanded .roadmap-chevron-btn {
+  color: var(--module-color, #6366f1);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.roadmap-navigate-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--module-color, #6366f1);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.25s ease;
+}
+
+.roadmap-module-node:hover .roadmap-navigate-arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* Mini progress bar at bottom of module */
@@ -348,7 +393,7 @@
 .roadmap-module-progress-fill {
   height: 100%;
   background: var(--module-color, #6366f1);
-  transition: width 0.4s ease;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 0 3px 0 0;
 }
 
@@ -383,37 +428,26 @@
   transition: all 0.2s ease;
   animation: lessonSlide 0.3s ease-out;
   animation-fill-mode: both;
+  cursor: pointer;
 }
 
 .roadmap-lesson-node:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateX(4px);
 }
 
-/* Vertical line connecting lessons */
+/* Connector line removed — clean checklist style */
 .roadmap-lesson-connector {
-  position: absolute;
-  left: 9px;
-  top: -2px;
-  bottom: -2px;
-  width: 2px;
-  background: rgba(255, 255, 255, 0.06);
+  display: none;
 }
 
-.roadmap-lesson-node:last-child .roadmap-lesson-connector {
-  bottom: 50%;
-}
-
-.roadmap-lesson-node:first-child .roadmap-lesson-connector {
-  top: 50%;
-}
-
-/* Lesson dot */
+/* Lesson dot / checkbox */
 .roadmap-lesson-dot {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.12);
-  background: #1a1a2e;
+  background: #0b1020;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -421,13 +455,30 @@
   position: relative;
   z-index: 1;
   transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.roadmap-lesson-dot:hover {
+  transform: scale(1.25);
+  border-color: var(--module-color, #6366f1);
+  box-shadow: 0 0 12px var(--module-color, rgba(99, 102, 241, 0.4));
+}
+
+.roadmap-lesson-dot.animating {
+  animation: checkboxBounce 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .roadmap-lesson-node.completed .roadmap-lesson-dot {
   background: #10b981;
   border-color: #10b981;
   color: #fff;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.roadmap-lesson-node.completed .roadmap-lesson-dot:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
 }
 
 .roadmap-lesson-node:not(.completed) .roadmap-lesson-dot {
@@ -438,10 +489,40 @@
   font-size: 0.82rem;
   color: #94a3b8;
   line-height: 1.3;
+  flex: 1;
 }
 
 .roadmap-lesson-node.completed .roadmap-lesson-title {
   color: #e2e8f0;
+}
+
+/* Next lesson highlight */
+.roadmap-lesson-node.next-lesson {
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.roadmap-lesson-node.next-lesson .roadmap-lesson-dot {
+  animation: nextLessonPulse 2s ease-in-out infinite;
+}
+
+.roadmap-lesson-node.next-lesson .roadmap-lesson-title {
+  color: #c7d2fe;
+  font-weight: 500;
+}
+
+/* Lesson navigate arrow */
+.roadmap-lesson-arrow {
+  color: var(--module-color, #6366f1);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.roadmap-lesson-node:hover .roadmap-lesson-arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* ─── Finish Node ─── */
@@ -457,6 +538,13 @@
   font-weight: 600;
   color: #10b981;
   animation: nodeAppear 0.5s ease-out 0.7s both;
+  transition: all 0.3s ease;
+}
+
+.roadmap-finish-node.completed {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(20, 184, 166, 0.15));
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.2);
 }
 
 .roadmap-finish-icon {
@@ -542,6 +630,22 @@
   }
 }
 
+@keyframes checkboxBounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.35); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+@keyframes nextLessonPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+  }
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
   .roadmap-header {
@@ -595,7 +699,11 @@
     font-size: 0.85rem;
   }
 
-  .roadmap-btn-download span {
+  .roadmap-navigate-arrow {
+    display: none;
+  }
+
+  .roadmap-lesson-arrow {
     display: none;
   }
 }
@@ -623,5 +731,30 @@
     flex-direction: column;
     text-align: center;
     gap: 0.5rem;
+  }
+}
+
+/* ─── Touch interaction helpers ─── */
+@media (hover: none) {
+  .roadmap-navigate-arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  .roadmap-lesson-arrow {
+    opacity: 0.6;
+    transform: none;
+  }
+
+  .roadmap-lesson-dot:hover {
+    transform: none;
+  }
+
+  .roadmap-module-node:hover {
+    transform: none;
+  }
+
+  .roadmap-lesson-node:hover {
+    transform: none;
   }
 }

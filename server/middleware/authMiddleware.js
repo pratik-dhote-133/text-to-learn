@@ -6,16 +6,27 @@ const protect = async (req, res, next) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
+
+      if (!token || token === 'undefined' || token === 'null') {
+        return res.status(401).json({ message: 'Not authorized, token missing or invalid' });
+      }
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
       req.user = await User.findById(decoded.id).select('-password');
-      next();
+      
+      if (!req.user) {
+        return res.status(401).json({ message: 'Not authorized, user not found' });
+      }
+
+      return next();
     } catch (error) {
-      res.status(401).json({ message: 'Not authorized, token failed' });
+      console.error('[AUTH MIDDLEWARE] Token error:', error.message);
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }
 
   if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 

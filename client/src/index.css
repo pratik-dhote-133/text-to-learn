@@ -2,35 +2,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-main: #212121;
-  --bg-sidebar: #171717;
-  --bg-hover: #2f2f2f;
-  --bg-card: #2a2a2a;
+  --bg-main: #0b1020;
+  --bg-sidebar: #080d1a;
+  --bg-hover: #1a2240;
+  --bg-card: #111827;
   
-  --text-main: #ececec;
-  --text-muted: #b4b4b4;
-  --border-color: #383838;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-color: rgba(99, 102, 241, 0.12);
   
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
+  --primary: #6366f1;
+  --primary-hover: #818cf8;
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
   --info: #06b6d4;
 
-  --radius-sm: 6px;
-  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
   --radius-lg: 24px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.06);
   
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   
   --success-soft: rgba(16, 185, 129, 0.1);
   --danger-soft: rgba(239, 68, 68, 0.1);
-  --primary-soft: rgba(59, 130, 246, 0.1);
+  --primary-soft: rgba(99, 102, 241, 0.1);
   --warning-soft: rgba(245, 158, 11, 0.1);
   --info-soft: rgba(6, 182, 212, 0.1);
 }
@@ -43,10 +43,38 @@
 }
 
 body {
-  background-color: var(--bg-main);
+  background: linear-gradient(180deg, #0b1020 0%, #0f172a 40%, #111827 100%);
+  background-attachment: fixed;
   color: var(--text-main);
   line-height: 1.6;
   overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Ambient glow effects */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  top: -20%;
+  left: 30%;
+  width: 50vw;
+  height: 50vh;
+  background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.07) 0%, transparent 65%);
+}
+
+body::after {
+  bottom: -10%;
+  right: 10%;
+  width: 40vw;
+  height: 40vh;
+  background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.05) 0%, transparent 60%);
 }
 
 a {
@@ -109,6 +137,8 @@ button:hover {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 /* Main Content Area */
@@ -119,6 +149,7 @@ button:hover {
   height: 100vh;
   overflow-y: auto;
   position: relative;
+  z-index: 1;
 }
 
 .container {
@@ -131,12 +162,12 @@ button:hover {
 /* Sidebar Styles */
 .sidebar {
   width: 60px;
-  background-color: var(--bg-sidebar);
+  background: linear-gradient(180deg, #080d1a 0%, #0a0f1e 100%);
   height: 100vh;
   display: flex;
   flex-direction: column;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-right: 1px solid var(--border-color);
+  border-right: 1px solid rgba(99, 102, 241, 0.08);
   overflow: hidden;
   position: relative;
   z-index: 50;
@@ -145,6 +176,7 @@ button:hover {
 
 .sidebar:hover {
   width: 260px;
+  border-right-color: rgba(99, 102, 241, 0.15);
 }
 
 .sidebar-content {
@@ -281,13 +313,15 @@ button:hover {
 
 /* Chat Input */
 .chat-input-wrapper {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.15);
   border-radius: var(--radius-lg);
   display: flex;
   padding: 0.5rem 1rem;
   align-items: center;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 30px rgba(99, 102, 241, 0.05);
   transition: var(--transition);
   margin-top: 2rem;
   max-width: 700px;
@@ -297,8 +331,8 @@ button:hover {
 }
 
 .chat-input-wrapper:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(99, 102, 241, 0.1);
 }
 
 .chat-input {
@@ -312,7 +346,7 @@ button:hover {
 }
 
 .chat-submit {
-  background: var(--primary);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
   color: white;
   border-radius: var(--radius-full);
   width: 36px;
@@ -321,37 +355,44 @@ button:hover {
   align-items: center;
   justify-content: center;
   padding: 0;
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
 }
 
 .chat-submit:hover {
-  background: var(--primary-hover);
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
 }
 
 .chat-submit:disabled {
-  background: var(--border-color);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 /* Cards */
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 102, 241, 0.1);
   border-radius: var(--radius-md);
   padding: 1.5rem;
   transition: var(--transition);
 }
 
 .card:hover {
-  border-color: #4a4a4a;
+  border-color: rgba(99, 102, 241, 0.2);
 }
 
 .card-hoverable {
   cursor: pointer;
 }
 .card-hoverable:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--text-muted);
+  transform: translateY(-3px) scale(1.005);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3), 0 0 24px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(17, 24, 39, 0.95);
 }
 
 /* Forms */
@@ -421,15 +462,17 @@ button:hover {
 .progress-bg {
   width: 100%;
   height: 8px;
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 4px;
   overflow: hidden;
   margin-top: 0.5rem;
 }
 .progress-fill {
   height: 100%;
-  background: var(--success);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #10b981);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
 }
 
 /* Lesson Content Markdown Styles */
@@ -552,76 +595,245 @@ button:hover {
 
 /* Print Styles for Professional PDF Export */
 @media print {
-  body {
-    background-color: #fff;
-    color: #000;
+  /* ── Base Reset ── */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
-  
-  .sidebar, .chat-input-wrapper, .lesson-footer, .video-wrapper, button, .navbar {
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
+  }
+
+  body::before,
+  body::after {
     display: none !important;
   }
-  
-  .main-content {
-    overflow: visible !important;
-    height: auto !important;
+
+  /* ── Hide non-printable elements ── */
+  .sidebar,
+  .sidebar-collapsed-icons,
+  .chat-input-wrapper,
+  .lesson-footer,
+  .video-wrapper,
+  .video-container,
+  .video-skeleton,
+  .no-video-alert,
+  .roadmap-wrapper,
+  .quiz-results,
+  button,
+  .navbar,
+  iframe {
+    display: none !important;
   }
-  
+
+  /* ── Layout Reset ── */
   .app-layout {
     height: auto !important;
     display: block !important;
+    overflow: visible !important;
   }
-  
-  #lesson-pdf-content, .lesson-renderer {
+
+  .main-content {
+    overflow: visible !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+  }
+
+  /* ── Lesson Content ── */
+  #lesson-pdf-content,
+  .lesson-renderer {
     padding: 0 !important;
     background: #fff !important;
     color: #000 !important;
   }
-  
+
+  .lesson-header h1 {
+    color: #000 !important;
+    font-size: 22pt !important;
+    border-bottom: 2px solid #333 !important;
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
   .lesson-heading {
     color: #000 !important;
-    border-left-color: #000 !important;
-    page-break-after: avoid;
+    border-left: 4px solid #333 !important;
+    padding-left: 0.75rem !important;
+    font-size: 14pt !important;
+    page-break-after: avoid !important;
+    margin-top: 1.5rem !important;
   }
-  
+
   .lesson-paragraph {
+    color: #222 !important;
+    font-size: 11pt !important;
+    line-height: 1.7 !important;
+    page-break-inside: avoid !important;
+    max-width: 100% !important;
+  }
+
+  /* ── Objectives Box ── */
+  .objectives-box {
+    background: #f5f5f5 !important;
+    border: 1px solid #ccc !important;
+    color: #000 !important;
+    page-break-inside: avoid !important;
+  }
+
+  .objectives-box h4 {
     color: #333 !important;
-    page-break-inside: avoid;
   }
-  
+
+  .objectives-box li {
+    color: #222 !important;
+  }
+
+  /* ── Callout Cards (Interview Tips, Notes, Warnings) ── */
+  .callout-card,
+  [class*="callout"] {
+    background: #f8f8f8 !important;
+    border: 1px solid #999 !important;
+    border-left: 4px solid #333 !important;
+    color: #000 !important;
+    page-break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  .callout-card h4,
+  .callout-content h4 {
+    color: #333 !important;
+  }
+
+  .callout-card p,
+  .callout-content p {
+    color: #222 !important;
+  }
+
+  .callout-icon {
+    filter: grayscale(0) !important;
+  }
+
+  /* ── Specific callout border colors for visual distinction ── */
+  .bg-warning-soft {
+    background: #fffde7 !important;
+    border-left-color: #f59e0b !important;
+  }
+
+  .bg-danger-soft {
+    background: #fff5f5 !important;
+    border-left-color: #ef4444 !important;
+  }
+
+  .bg-success-soft {
+    background: #f0fdf4 !important;
+    border-left-color: #10b981 !important;
+  }
+
+  .bg-primary-soft {
+    background: #eef2ff !important;
+    border-left-color: #6366f1 !important;
+  }
+
+  .bg-info-soft {
+    background: #ecfeff !important;
+    border-left-color: #06b6d4 !important;
+  }
+
+  /* ── Code Blocks ── */
   .code-block-wrapper {
-    background: #f8f9fa !important;
-    border: 1px solid #dee2e6 !important;
-    page-break-inside: avoid;
+    background: #f4f4f5 !important;
+    border: 1px solid #d1d5db !important;
+    page-break-inside: avoid !important;
     color: #000 !important;
   }
-  
+
   .code-header {
-    background: #e9ecef !important;
-    border-bottom: 1px solid #dee2e6 !important;
+    background: #e5e7eb !important;
+    border-bottom: 1px solid #d1d5db !important;
     color: #000 !important;
   }
-  
+
+  pre,
+  code {
+    background: transparent !important;
+    color: #000 !important;
+    text-shadow: none !important;
+    font-size: 9pt !important;
+  }
+
+  /* ── MCQ Cards ── */
   .mcq-card {
     border: 1px solid #ccc !important;
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
     background: #fff !important;
     color: #000 !important;
   }
-  
-  .option-btn {
+
+  .mcq-card h4 {
+    color: #000 !important;
+  }
+
+  .option-btn,
+  .option-btn label {
     border: 1px solid #ccc !important;
     color: #000 !important;
-  }
-  
-  /* Syntax Highlighter colors need to be forced to dark/printable if needed, or let them be since code block handles text */
-  pre {
     background: transparent !important;
-    text-shadow: none !important;
-    color: #000 !important;
   }
-  
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+
+  /* ── Progress bars ── */
+  .progress-bg,
+  .progress-fill {
+    display: none !important;
+  }
+
+  /* ── Typography overrides ── */
+  h1, h2, h3, h4, h5, h6 {
+    color: #000 !important;
+    page-break-after: avoid !important;
+  }
+
+  p, li, span, div {
+    color: #222 !important;
+  }
+
+  .text-muted {
+    color: #555 !important;
+  }
+
+  .text-primary {
+    color: #333 !important;
+  }
+
+  /* ── Links ── */
+  a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+
+  /* ── Page breaks ── */
+  .pdf-no-break {
+    page-break-inside: avoid !important;
+  }
+
+  .html2pdf__page-break {
+    page-break-before: always !important;
+  }
+
+  /* ── Margins ── */
+  @page {
+    margin: 1.5cm 2cm;
   }
 }

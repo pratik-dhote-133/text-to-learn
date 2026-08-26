@@ -10,7 +10,16 @@ export const AuthProvider = ({ children }) => {
     // Check if user is logged in
     const userInfo = localStorage.getItem('userInfo');
     if (userInfo) {
-      setUser(JSON.parse(userInfo));
+      try {
+        const parsed = JSON.parse(userInfo);
+        if (parsed && parsed.token && typeof parsed.token === 'string') {
+          setUser(parsed);
+        } else {
+          localStorage.removeItem('userInfo');
+        }
+      } catch (err) {
+        localStorage.removeItem('userInfo');
+      }
     }
     setLoading(false);
   }, []);

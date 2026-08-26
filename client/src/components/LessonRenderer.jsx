@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { API_BASE_URL } from '../utils/api';
+
 const HeadingBlock = ({ text }) => (
   <h2 className="lesson-heading mt-5 mb-3" style={{ color: 'var(--primary)' }}>{text}</h2>
 );
@@ -59,8 +61,9 @@ const VideoBlock = ({ query, courseId }) => {
 
   useEffect(() => {
     const fetchVideo = async () => {
+      if (!user?.token) return;
       try {
-        const url = `http://localhost:3000/api/youtube?query=${encodeURIComponent(query)}&courseId=${courseId}`;
+        const url = `${API_BASE_URL}/api/youtube?query=${encodeURIComponent(query)}&courseId=${courseId}`;
         const res = await fetch(url, {
           headers: { 'Authorization': `Bearer ${user.token}` }
         });
@@ -72,9 +75,9 @@ const VideoBlock = ({ query, courseId }) => {
         setLoading(false);
       }
     };
-    if (query) fetchVideo();
+    if (query && user?.token) fetchVideo();
     else setLoading(false);
-  }, [query, user.token, courseId]);
+  }, [query, user?.token, courseId]);
 
   if (loading) return <div className="video-skeleton animate-pulse my-5 h-64 bg-gray-200 rounded">Loading video tutorial...</div>;
 
@@ -219,7 +222,7 @@ const LessonRenderer = ({ lesson, courseId, moduleIndex, lessonIndex, onComplete
     setFinalScore(score);
 
     try {
-      await fetch(`http://localhost:3000/api/courses/${courseId}/quiz`, {
+      await fetch(`${API_BASE_URL}/api/courses/${courseId}/quiz`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
