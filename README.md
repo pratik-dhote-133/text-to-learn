@@ -1,4 +1,4 @@
-# Text-to-Learn: AI-Powered Course Generator 
+# Text-to-Learn: AI-Powered Course Generator
 
 **Text-to-Learn** is a full-stack, AI-driven learning platform that transforms any learning topic into a structured, interactive curriculum.
 
@@ -8,7 +8,7 @@ The platform uses **Google Gemini 2.5 Flash** for AI-powered curriculum and less
 
 ---
 
-##  Key Features
+## Key Features
 
 ### 1. Dynamic Topic-Aware Curriculum Generation
 
@@ -140,11 +140,11 @@ The frontend stores authenticated user information locally and sends the JWT wit
 
 ---
 
-# 🏗️ System Architecture
+## 🏗️ System Architecture
 
-Text-to-Learn follows a full-stack architecture where the React frontend communicates with a Node.js/Express backend. The backend handles authentication, course generation, lesson data, progress tracking, and integrations with Google Gemini and the YouTube Data API. MongoDB is used for persistent storage.
+Text-to-Learn follows a full-stack architecture where the React frontend communicates with a Node.js/Express backend. The backend handles authentication, course generation, lesson generation, progress tracking, and integrations with Google Gemini and the YouTube Data API. MongoDB Atlas is used for persistent storage.
 
-The architecture diagram was generated using **[Archify](https://github.com/tt-a1i/archify)** by analyzing the actual project codebase to better understand and document the relationships between the application's components.
+The architecture diagram was generated using **[Archify](https://github.com/tt-a1i/archify)** by analyzing the actual project codebase to document the relationships between the application's components.
 
 ![Text-to-Learn System Architecture](docs/architecture.png)
 
@@ -152,6 +152,7 @@ The architecture diagram was generated using **[Archify](https://github.com/tt-a
 
 ```text
 Text-to-Learn/
+
 │
 ├── client/                         # React + Vite Frontend
 │   │
@@ -208,5 +209,4 @@ Text-to-Learn/
         ├── aiService.js
         ├── youtubeService.js
         └── domainRoadmaps.js
-
 ```
