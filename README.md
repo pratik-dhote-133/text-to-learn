@@ -1,125 +1,204 @@
-# Text-to-Learn: AI-Powered Course Generator 🚀
+# Text-to-Learn: AI-Powered Course Generator 
 
-**Text-to-Learn** is a full-stack, AI-driven educational platform that transforms any learning topic into a structured, interactive, professional curriculum. Powered by Google Gemini 2.5 Flash, YouTube Data API v3, and an interactive flow roadmap, Text-to-Learn breaks down complex topics into progressive modules, bite-sized lessons, practical code examples, callouts, knowledge-check MCQs, YouTube video tutorials, and printable PDF exports.
+**Text-to-Learn** is a full-stack, AI-driven learning platform that transforms any learning topic into a structured, interactive curriculum.
 
----
+Users can enter a topic such as **React, Data Structures, Dynamic Programming, CSS Flexbox, Machine Learning, Photography, or Culinary Arts**, and the platform generates a progressive learning experience consisting of modules, lessons, practical examples, knowledge-check MCQs, YouTube tutorials, progress tracking, and a visual learning roadmap.
 
-## 🌟 Key Features
-
-1. **Dynamic Topic-Aware Curriculum Generation**: Converts any input topic (e.g. *React*, *Dynamic Programming*, *CSS Flexbox*, *Machine Learning*, *Photography*, *Culinary Arts*) into a 4-module x 4-lesson curriculum with a final assessment module.
-2. **Interactive Visual Learning Roadmap**: Renders an interactive node graph (`LearningRoadmap.jsx`) showing course progress, node completion status, module accordions, active lesson highlights, and high-resolution PNG image export (`html-to-image`).
-3. **On-Demand AI Lesson Breakdown**: Generates beginner-friendly explanations, key objectives, syntax-highlighted code blocks (`Prism`), callout badges (*Interview Tip*, *Common Mistake*, *Best Practice*, *Pro Tip*), and 5 scenario-based MCQs per lesson.
-4. **Semantic YouTube Video Integration**: Searches YouTube API v3 with a scoring algorithm that filters out Shorts, music, memes, and reaction videos, prioritizing trusted channels (*freeCodeCamp*, *MIT OpenCourseWare*, *Coursera*, *GeeksforGeeks*, *Fireship*, etc.), rendering a responsive 16:9 player inside the lesson.
-5. **Print-Optimized PDF Export**: Native browser PDF export (`window.print()`) styled via print CSS (`@media print`) that converts the dark-mode dashboard into a clean white document layout with black text, formatted callouts, code blocks, and no clipped content.
-6. **Robust Progress Tracking & Quiz Scoring**: Tracks completed lessons and quiz scores per user in MongoDB, persisted across sessions and logins.
-7. **Production-Ready Security & Authentication**: Custom `bcryptjs` password hashing and `jsonwebtoken` Bearer token verification with protected API routes.
+The platform uses **Google Gemini 2.5 Flash** for AI-powered curriculum and lesson generation, **YouTube Data API v3** for educational video discovery, **MongoDB Atlas** for persistent data storage, and a React-based interactive roadmap for course navigation and progress visualization.
 
 ---
 
-## 🏗 Architecture Overview
+##  Key Features
 
-```
+### 1. Dynamic Topic-Aware Curriculum Generation
+
+Converts a user's input topic into a structured curriculum containing:
+
+- 4 learning modules
+- 4 lessons per module
+- Progressive topic coverage
+- A final assessment module
+
+The curriculum is generated dynamically based on the requested topic rather than relying on a fixed course structure.
+
+Example topics include:
+
+- React
+- Dynamic Programming
+- CSS Flexbox
+- Machine Learning
+- Data Structures
+- Photography
+- Culinary Arts
+
+---
+
+### 2. Interactive Visual Learning Roadmap
+
+The course interface includes an interactive visual roadmap implemented using:
+
+- `LearningRoadmap.jsx`
+- React
+- CSS
+- `html-to-image`
+
+The roadmap provides:
+
+- Module navigation
+- Expand/collapse module sections
+- Lesson completion status
+- Course progress visualization
+- Active lesson highlighting
+- Interactive lesson nodes
+- High-resolution PNG roadmap export
+
+---
+
+### 3. On-Demand AI Lesson Generation
+
+Lessons are generated on demand using Google Gemini.
+
+Each lesson can contain:
+
+- Beginner-friendly explanations
+- Learning objectives
+- Practical examples
+- Syntax-highlighted code blocks for technical topics
+- Interview Tips
+- Common Mistakes
+- Best Practices
+- Pro Tips
+- Scenario-based MCQs
+
+Technical code examples are rendered using **Prism Syntax Highlighter**.
+
+---
+
+### 4. Semantic YouTube Video Integration
+
+The backend integrates with the **YouTube Data API v3** to find relevant educational videos.
+
+The application uses a filtering and scoring approach to improve video relevance by considering factors such as:
+
+- Topic relevance
+- Video title and description
+- Educational content
+- Video duration
+- Channel relevance
+- Exclusion of Shorts
+- Exclusion of music, memes, and reaction-oriented content
+
+The selected videos are displayed inside lessons using a responsive 16:9 video player.
+
+---
+
+### 5. Print-Optimized PDF Export
+
+The application uses the browser's native **Print-to-PDF** workflow through `window.print()`.
+
+Dedicated `@media print` styles transform the application into a print-friendly document layout.
+
+The print stylesheet provides:
+
+- White document background
+- Black readable text
+- Formatted callouts
+- Formatted code blocks
+- Print-friendly spacing
+- Removal of unnecessary dashboard elements
+- Prevention of clipped lesson content
+
+---
+
+### 6. Progress Tracking and Quiz Scoring
+
+User learning progress is persisted in MongoDB.
+
+The system tracks:
+
+- Completed lessons
+- Course progress
+- Quiz scores
+- User-specific course data
+
+Progress is associated with authenticated users and persists across sessions.
+
+---
+
+### 7. JWT-Based Authentication and Protected API Routes
+
+The application uses custom authentication rather than an external authentication provider.
+
+Authentication is implemented using:
+
+- `bcryptjs` for password hashing
+- `jsonwebtoken` for JWT creation and verification
+- Bearer tokens for authenticated API requests
+- Protected backend routes
+
+The frontend stores authenticated user information locally and sends the JWT with protected API requests.
+
+---
+
+# 🏗 Architecture Overview
+
+```text
 Text-to-Learn/
-├── client/                     # React 18 + Vite SPA Frontend
+│
+├── client/                         # React + Vite Frontend
+│   │
 │   ├── src/
-│   │   ├── components/        # Layout, Sidebar, LessonRenderer, LearningRoadmap
-│   │   ├── context/           # AuthContext (JWT & User state)
-│   │   ├── pages/             # Home, CoursePage, ModulePage, LessonPage, Login, Signup, ForgotPassword
-│   │   └── utils/             # Centralized API fetch configuration (api.js)
-│   └── index.css              # Custom CSS design system & print stylesheet
-└── server/                     # Express 5 Node.js Backend API
-    ├── config/                # MongoDB Mongoose connection (db.js)
-    ├── controllers/           # authController.js, courseController.js
-    ├── middleware/            # authMiddleware.js (JWT Bearer protect)
-    ├── models/                # User.js, Course.js
-    ├── routes/                # authRoutes.js, courseRoutes.js, debugRoutes.js
-    └── services/              # aiService.js (Gemini 2.5 Flash), youtubeService.js, domainRoadmaps.js
+│   │   ├── components/
+│   │   │   ├── Layout.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── LessonRenderer.jsx
+│   │   │   └── LearningRoadmap.jsx
+│   │   │
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Home.jsx
+│   │   │   ├── CoursePage.jsx
+│   │   │   ├── ModulePage.jsx
+│   │   │   ├── LessonPage.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Signup.jsx
+│   │   │   └── ForgotPassword.jsx
+│   │   │
+│   │   └── utils/
+│   │       └── api.js
+│   │
+│   ├── index.css
+│   ├── App.jsx
+│   ├── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+└── server/                         # Node.js + Express Backend
+    │
+    ├── config/
+    │   └── db.js
+    │
+    ├── controllers/
+    │   ├── authController.js
+    │   └── courseController.js
+    │
+    ├── middleware/
+    │   └── authMiddleware.js
+    │
+    ├── models/
+    │   ├── User.js
+    │   └── Course.js
+    │
+    ├── routes/
+    │   ├── authRoutes.js
+    │   ├── courseRoutes.js
+    │   └── debugRoutes.js
+    │
+    └── services/
+        ├── aiService.js
+        ├── youtubeService.js
+        └── domainRoadmaps.js
+
 ```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js (v18 or higher)
-- MongoDB running locally (`mongodb://127.0.0.1:27017/textToLearn`) or MongoDB Atlas connection string
-- Google Gemini API Key (`GEMINI_API_KEY`)
-- YouTube Data API v3 Key (`YOUTUBE_API_KEY`)
-
-### Environment Variables Setup
-
-Create a `.env` file in the `server` directory:
-
-```env
-PORT=3000
-MONGO_URI=mongodb://127.0.0.1:27017/textToLearn
-JWT_SECRET=your_super_secret_jwt_key
-GEMINI_API_KEY=your_gemini_api_key
-YOUTUBE_API_KEY=your_youtube_api_key
-```
-
-### Installation
-
-1. **Install Backend Dependencies**:
-   ```bash
-   cd server
-   npm install
-   ```
-
-2. **Install Frontend Dependencies**:
-   ```bash
-   cd ../client
-   npm install
-   ```
-
-### Running Locally
-
-1. **Start Backend Server**:
-   ```bash
-   cd server
-   npm run dev
-   ```
-
-2. **Start Frontend Dev Server**:
-   ```bash
-   cd client
-   npm run dev
-   ```
-
-3. Open your browser at `http://localhost:5173`.
-
----
-
-## 📡 API Overview
-
-### Authentication (`/api/auth`)
-- `POST /api/auth/register`: Create user account & return JWT token.
-- `POST /api/auth/login`: Authenticate user & return JWT token.
-- `POST /api/auth/reset-password`: Reset user password.
-- `GET /api/auth/me`: Get current user details.
-
-### Courses & Lessons (`/api/courses`)
-- `GET /api/courses`: Fetch user's generated courses.
-- `POST /api/courses/generate`: Generate course structure for a topic.
-- `GET /api/courses/:id`: Get full details of a specific course.
-- `POST /api/courses/generate-lesson/:id/:moduleIndex/:lessonIndex`: On-demand AI lesson generation.
-- `POST /api/courses/:id/progress`: Toggle lesson completion state.
-- `POST /api/courses/:id/quiz`: Submit MCQ quiz score.
-- `GET /api/youtube`: Query YouTube proxy with semantic filtering.
-
----
-
-## 🛠 Tech Stack
-
-- **Frontend**: React 18, Vite, React Router 6, Prism Syntax Highlighter, html-to-image.
-- **Backend**: Node.js, Express 5, Mongoose, @google/generative-ai, Axios, bcryptjs, jsonwebtoken, p-queue.
-- **Database**: MongoDB.
-- **CI/CD**: GitHub Actions (`.github/workflows/ci.yml`).
-
----
-
-## 📝 Intentional Implementation Deviations from Original Proposal
-
-1. **Authentication (JWT vs Auth0)**: The project intentionally utilizes custom `bcryptjs` password hashing and `jsonwebtoken` Bearer token authentication rather than Auth0. This eliminates external OAuth dependency risks while maintaining full security and user ownership.
-2. **Database Schema (Embedded Document Model)**: Courses embed `modules[]` and `lessons[]` in a single document schema. This allows atomic single-query retrieval of complete roadmaps without expensive relational joins or N+1 queries.
-3. **Multilingual / Hinglish & TTS**: Text-To-Speech audio and Hinglish translation were intentionally scoped out of this release to prioritize deep topic-aware AI lesson quality, YouTube semantic filtering, interactive node graph export, and print PDF styling.
