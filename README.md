@@ -140,7 +140,15 @@ The frontend stores authenticated user information locally and sends the JWT wit
 
 ---
 
-# 🏗 Architecture Overview
+# 🏗️ System Architecture
+
+Text-to-Learn follows a full-stack architecture where the React frontend communicates with a Node.js/Express backend. The backend handles authentication, course generation, lesson data, progress tracking, and integrations with Google Gemini and the YouTube Data API. MongoDB is used for persistent storage.
+
+The architecture diagram was generated using **[Archify](https://github.com/tt-a1i/archify)** by analyzing the actual project codebase to better understand and document the relationships between the application's components.
+
+![Text-to-Learn System Architecture](docs/architecture.png)
+
+### Repository Directory Structure
 
 ```text
 Text-to-Learn/
