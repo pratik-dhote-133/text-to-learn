@@ -1,6 +1,14 @@
 const jwt  = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Fail loudly if JWT_SECRET is absent.
+if (!process.env.JWT_SECRET) {
+  throw new Error(
+    '[authMiddleware] JWT_SECRET environment variable is not set. ' +
+    'Set it in server/.env before starting the server.'
+  );
+}
+
 const protect = async (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -11,7 +19,7 @@ const protect = async (req, res, next) => {
         return res.status(401).json({ message: 'Not authorized, token missing or invalid' });
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.id).select('-password');
 
       if (!req.user) {

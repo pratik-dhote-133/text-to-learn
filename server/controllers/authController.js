@@ -18,6 +18,7 @@
  *  - Tokens are single-use: they are cleared from the DB on first successful use.
  *  - All token lookups compare the hash of the submitted value against the stored hash.
  *  - Password changes require a valid unexpired token - never just an email address.
+ *  - JWT_SECRET must be set in the environment. The server refuses to start without it.
  */
 
 const crypto = require('crypto');
@@ -34,10 +35,19 @@ const {
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// --- Startup guard -----------------------------------------------------------
+// Fail loudly if JWT_SECRET is absent rather than falling back to a known string.
+if (!process.env.JWT_SECRET) {
+  throw new Error(
+    '[authController] JWT_SECRET environment variable is not set. ' +
+    'Set it in server/.env before starting the server.'
+  );
+}
+
 // --- Helpers ------------------------------------------------------------------
 
 const generateToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '30d' });
+  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
 /** Returns a cryptographically random hex string and its SHA-256 hash. */
 function makeToken() {
