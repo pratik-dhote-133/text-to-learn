@@ -125,18 +125,19 @@ Progress is associated with authenticated users and persists across sessions.
 
 ---
 
-### 7. JWT-Based Authentication and Protected API Routes
+### 7. JWT-Based Authentication, Google Sign-In, and Protected API Routes
 
-The application uses custom authentication rather than an external authentication provider.
+The application implements secure authentication using a combination of traditional email/password login and Google Sign-In, with JSON Web Tokens (JWT) for authenticated API access.
 
-Authentication is implemented using:
+Authentication includes:
 
-- `bcryptjs` for password hashing
-- `jsonwebtoken` for JWT creation and verification
-- Bearer tokens for authenticated API requests
-- Protected backend routes
+- **Email/Password Authentication:** User passwords are securely hashed using `bcryptjs`.
+- **Google Sign-In:** Integrates Google OAuth authentication to allow users to sign in with their Google accounts.
+- **JWT Authentication:** Uses `jsonwebtoken` to generate and verify tokens for authenticated sessions.
+- **Protected API Routes:** Uses Bearer tokens to authenticate requests to protected backend endpoints.
+- **Frontend Authentication State:** Stores authentication information locally and attaches the JWT to protected API requests.
 
-The frontend stores authenticated user information locally and sends the JWT with protected API requests.
+The backend verifies Google ID tokens before issuing application JWTs, enabling authenticated access to protected resources.
 
 ---
 
