@@ -7,6 +7,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
+import VerifyEmail from "./pages/VerifyEmail";
+import ResetPassword from "./pages/ResetPassword";
 import CoursePage from "./pages/CoursePage";
 import ModulePage from "./pages/ModulePage";
 import LessonPage from "./pages/LessonPage";
@@ -23,14 +25,18 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          
-          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-          <Route path="/course/:id" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
-          <Route path="/module/:courseId/:moduleIndex" element={<ProtectedRoute><ModulePage /></ProtectedRoute>} />
-          <Route path="/lesson/:courseId/:moduleIndex/:lessonIndex" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
+          {/* Public auth routes */}
+          <Route path="/login"            element={<Login />} />
+          <Route path="/signup"           element={<Signup />} />
+          <Route path="/forgot-password"  element={<ForgotPassword />} />
+          <Route path="/verify-email"     element={<VerifyEmail />} />
+          <Route path="/reset-password"   element={<ResetPassword />} />
+
+          {/* Protected app routes */}
+          <Route path="/"                                                         element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/course/:id"                                               element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
+          <Route path="/module/:courseId/:moduleIndex"                            element={<ProtectedRoute><ModulePage /></ProtectedRoute>} />
+          <Route path="/lesson/:courseId/:moduleIndex/:lessonIndex"               element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
